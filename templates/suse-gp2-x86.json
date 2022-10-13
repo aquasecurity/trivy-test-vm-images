@@ -1,0 +1,25 @@
+{
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "ap-northeast-1",
+      "source_ami": "ami-083ce3c8d8d74b88c",
+      "instance_type": "t2.micro",
+      "ssh_username": "ec2-user",
+      "ami_name": "suse-gp2-x86",
+      "tags": {
+        "Name": "suse-gp2-x86",
+        "Description": "created by packer"
+      },
+      "snapshot_tags": {
+        "Name": "suse-gp2-x86",
+        "Description": "created by packer"
+      },
+      "launch_block_device_mappings": {
+        "device_name": "/dev/sda1",
+        "volume_type": "gp2",
+        "volume_size": 10
+      }
+    }
+  ]
+}
