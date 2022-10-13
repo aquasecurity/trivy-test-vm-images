@@ -1,5 +1,19 @@
 #!/bin/bash
 
+
+if !(type "oras" > /dev/null 2>&1); then
+  echo 'Please install "oras"'
+  echo 'See. https://oras.land/cli'
+  exit 1
+fi
+
+if !(type "coldsnap" > /dev/null 2>&1); then
+  echo 'Please install "coldsnap"'
+  echo 'See. https://github.com/awslabs/coldsnap'
+  exit 1
+fi
+
+
 IDs=$(aws ec2 describe-snapshots --filters "Name=tag:Description,Values=created by packer" | jq -r ".Snapshots[].SnapshotId")
 REPO=ghcr.io/masahiro331/test-vm
 mkdir images
