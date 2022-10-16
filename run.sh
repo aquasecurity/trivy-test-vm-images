@@ -1,9 +1,12 @@
 #!/bin/bash
 set -e
 
-export BUCKET_NAME=a
-export PREFIX=a
-export REPO=a
+# Ref. https://docs.aws.amazon.com/vm-import/latest/userguide/vmexport_image.html
+export BUCKET_NAME=
+export PREFIX=
+
+# GHCR url
+export REPO=
 
 if [ -e $REPO ]; then
   echo "REPO variable is empty"
