@@ -10,7 +10,10 @@ if !(type "aws" > /dev/null 2>&1); then
 fi
 
 
-IMAGE_IDs=$(aws ec2 describe-images --filters "Name=tag:Description,Values=created by packer" | jq -r ".Images[].ImageId")
+IMAGE_IDs=$(aws ec2 describe-images \
+  --owner self \
+  --filters "Name=tag:Description,Values=created by packer" \
+  | jq -r ".Images[].ImageId")
 
 taskIds=()
 for IMAGE_ID in $IMAGE_IDs

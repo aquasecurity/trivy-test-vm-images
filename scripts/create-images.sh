@@ -10,5 +10,13 @@ fi
 TEMPLATES=$(ls -1  templates/*.json)
 for template in $TEMPLATES
 do
-  packer build ${template}
+  name=$(cat $template | jq -r ".builders[].ami_name")
+  ret=$(aws ec2 describe-images \
+    --owners self \
+    --filters "Name=name,Values=$name" | jq ".Images[]")
+  if [ -z "$ret" ]; then
+    packer build ${template}
+  else
+    echo "Skip build $name"
+  fi
 done

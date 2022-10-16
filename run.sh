@@ -23,15 +23,11 @@ if [ -e $BUCKET_NAME ]; then
   exit 1
 fi
 
-ret=$(aws ec2 describe-images --filters "Name=tag:Description,Values=created by packer" | jq -r ".Images[].ImageId")
-if [ -z "$ret" ]; then
-  ./scripts/create-images.sh
-fi
-
 if [ -e "images/" ]; then
   rm -f images/**
 fi
 
+./scripts/create-images.sh
 ./scripts/create-and-download-vmdk.sh
 ./scripts/download-snapsthots.sh
 ./scripts/push-images.sh
