@@ -6,12 +6,19 @@ on:
   pull_request:
 jobs:
   test:
-    name: Test
+    name: Build VM images
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build
+      - name: Build Ubuntu 22.04
         run: |
-          packer build ubuntu-2204.json
-          ls output-vagrant
+          packer build -force ubuntu-2204.json
+          mkdir ubuntu-2204
+          tar xvf output-vagrant/package.box -C ubuntu-2204
+
+      - name: Build Amazon Linux 2
+        run: |
+          packer build -force amazonlinux-2.json
+          mkdir amazonlinux-2
+          tar xvf output-vagrant/package.box -C amazonlinux-2
