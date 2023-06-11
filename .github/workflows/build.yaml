@@ -11,14 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install qemu
+        run: brew install qemu
+
       - name: Build Ubuntu 22.04
         run: |
           packer build -force ubuntu-2204.json
           mkdir ubuntu-2204
           tar xvf output-vagrant/package.box -C ubuntu-2204
+          qemu-img convert -O raw ubuntu-2204/box-disk001.vmdk ubuntu-2204/ubuntu-2204.img
 
       - name: Build Amazon Linux 2
         run: |
           packer build -force amazonlinux-2.json
           mkdir amazonlinux-2
           tar xvf output-vagrant/package.box -C amazonlinux-2
+          qemu-img convert -O raw amazonlinux-2/box-disk001.vmdk amazonlinux-2/amazonlinux-2.img
