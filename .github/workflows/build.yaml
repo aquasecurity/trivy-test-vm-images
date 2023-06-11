@@ -11,8 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install qemu
-        run: brew install qemu
+      - name: Install tools
+        run: brew install qemu oras
+
+      # Docker doesn't work on macos
+      # cf. https://github.com/docker/login-action/issues/93
+      - name: Login to GitHub Container Registry
+        run: oras login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
 
       - name: Build Ubuntu 22.04
         run: |
@@ -21,9 +26,31 @@ jobs:
           tar xvf output-vagrant/package.box -C ubuntu-2204
           qemu-img convert -O raw ubuntu-2204/box-disk001.vmdk ubuntu-2204/ubuntu-2204.img
 
+      - name: Push Ubuntu 22.04
+        run: |
+          mv ubuntu-2204/box-disk001.vmdk ubuntu-2204/ubuntu-2204.vmdk
+          cd ubuntu-2204
+          gzip ubuntu-2204.img ubuntu-2204.vmdk
+          oras push ghcr.io/${{ github.repository_owner }}/trivy-test-vm-images2:ubuntu-2204 \
+            --artifact-type application/vnd.aquasec.trivy.config \
+            ubuntu-2204.img.gz:application/vnd.aquasec.trivy.vm.image.v1+gzip \
+            ubuntu-2204.vmdk.gz:application/vnd.aquasec.trivy.vm.vmdk.v1+gzip
+          cd .. && rm -rf ubuntu-2204
+
       - name: Build Amazon Linux 2
         run: |
           packer build -force amazonlinux-2.json
           mkdir amazonlinux-2
           tar xvf output-vagrant/package.box -C amazonlinux-2
-          qemu-img convert -O raw amazonlinux-2/box-disk001.vmdk amazonlinux-2/amazonlinux-2.img
+          qemu-img convert -O raw amazonlinux-2/box-disk001.vmdk amazonlinux-2/amazon-2.img
+
+      - name: Push Amazon Linux 2
+        run: |
+          mv amazonlinux-2/box-disk001.vmdk amazonlinux-2/amazon-2.vmdk
+          cd amazonlinux-2
+          gzip amazon-2.img amazon-2.vmdk
+          oras push ghcr.io/${{ github.repository_owner }}/trivy-test-vm-images2:amazon-2 \
+            --artifact-type application/vnd.aquasec.trivy.config \
+            amazon-2.img.gz:application/vnd.aquasec.trivy.vm.image.v1+gzip \
+            amazon-2.vmdk.gz:application/vnd.aquasec.trivy.vm.vmdk.v1+gzip
+          cd .. && rm -rf amazonlinux-2
