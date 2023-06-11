@@ -1,0 +1,19 @@
+{
+  "builders": [
+    {
+      "communicator": "ssh",
+      "source_path": "bento/ubuntu-22.04",
+      "box_version": "202305.24.0",
+      "provider": "virtualbox",
+      "add_force": true,
+      "type": "vagrant"
+    }
+  ],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sudo apt-get -y update",
+      "sudo apt-get -y install git"
+    ]
+  }]
+}
