@@ -3,7 +3,7 @@
     {
       "communicator": "ssh",
       "source_path": "bento/amazonlinux-2",
-      "box_version": "v1.3",
+      "box_version": "1.3",
       "provider": "virtualbox",
       "add_force": true,
       "type": "vagrant"
