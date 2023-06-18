@@ -14,14 +14,14 @@ jobs:
       - name: Install tools
         run: brew install qemu oras
 
-      # Docker doesn't work on macos
+      # Docker doesn't work on macos-latest
       # cf. https://github.com/docker/login-action/issues/93
       - name: Login to GitHub Container Registry
         run: oras login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
 
       - name: Build Ubuntu 22.04
         run: |
-          packer build -force ubuntu-2204.json
+          packer build -force templates/ubuntu-2204.json
           mkdir ubuntu-2204
           tar xvf output-vagrant/package.box -C ubuntu-2204
           qemu-img convert -O raw ubuntu-2204/box-disk001.vmdk ubuntu-2204/ubuntu-2204.img
@@ -39,7 +39,7 @@ jobs:
 
       - name: Build Amazon Linux 2
         run: |
-          packer build -force amazonlinux-2.json
+          packer build -force templates/amazonlinux-2.json
           mkdir amazonlinux-2
           tar xvf output-vagrant/package.box -C amazonlinux-2
           qemu-img convert -O raw amazonlinux-2/box-disk001.vmdk amazonlinux-2/amazon-2.img
